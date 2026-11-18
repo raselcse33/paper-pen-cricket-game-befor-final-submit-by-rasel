@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Notebook Grid Cricket</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SVG filters: give borders a hand-drawn wobble -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="wobble" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/>
+    </filter>
+    <filter id="wobble2" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="9" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.5"/>
+    </filter>
+  </defs>
+</svg>
+
+<div id="viewport">
+  <div id="stage">
+    <div id="margin"></div>
+    <div id="holes"><i></i><i></i><i></i></div>
+
+    <!-- ============ MAIN MENU ============ -->
+    <section id="menu" class="screen active">
+      <h1 class="title">Notebook<br>Grid Cricket</h1>
+      <p class="sub">Remember the cricket we played on the last pages of our school notebook?</p>
+      <div class="menu-btns">
+        <button class="btn" data-mode="ai">VS Computer</button>
+        <button class="btn red" data-mode="pvp">2-Player Pass &amp; Play</button>
+        <button class="btn small" id="howBtn">How to play</button>
+      </div>
+      <svg class="doodle" viewBox="0 0 220 220" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <!-- bat -->
+        <g stroke="#1f3fbf" stroke-width="4">
+          <path d="M60 170 L128 54 Q138 40 150 48 Q160 56 152 70 L88 182 Q80 194 68 188 Q56 182 60 170Z"/>
+          <path d="M138 52 L168 22"/>
+          <path d="M70 160 L84 168 M78 146 L92 154"/>
+        </g>
+        <!-- ball -->
+        <g stroke="#d42a2a" stroke-width="4">
+          <circle cx="166" cy="158" r="30"/>
+          <path d="M146 140 Q166 158 146 178"/>
+          <path d="M186 138 Q166 158 186 176"/>
+        </g>
+        <path d="M20 205 Q70 195 120 208 T205 200" stroke="#555" stroke-width="2.5"/>
+      </svg>
+    </section>
+
+    <!-- ============ SETUP ============ -->
+    <section id="setup" class="screen">
+      <h2 class="title2" id="setupTitle">Match Setup</h2>
+      <div class="setup-row" style="top:200px">
+        <span class="lbl">Overs</span>
+        <div class="choices" id="oversChoices">
+          <button class="chip" data-v="2">2 Overs<small>12 balls</small></button>
+          <button class="chip" data-v="5">5 Overs<small>30 balls</small></button>
+          <button class="chip" data-v="10">10 Overs<small>60 balls</small></button>
+        </div>
+      </div>
+      <div class="setup-row" style="top:370px">
+        <span class="lbl">Wickets</span>
+        <div class="choices" id="wktChoices">
+          <button class="chip" data-v="3">3 Wickets</button>
+          <button class="chip" data-v="5">5 Wickets</button>
+        </div>
+      </div>
+      <div class="setup-btns">
+        <button class="btn small" id="setupBack">&larr; Back</button>
+        <button class="btn red" id="setupGo">Go to Toss &rarr;</button>
+      </div>
+    </section>
+
+    <!-- ============ TOSS ============ -->
+    <section id="toss" class="screen">
+      <div id="tossBody"></div>
+    </section>
+
+    <!-- ============ GAME ============ -->
+    <section id="game" class="screen">
+      <div id="banner">&nbsp;</div>
+
+      <aside id="leftPanel" class="panel sketch">
+        <h3>SCOREBOARD</h3>
+        <div class="small" id="sInn">Innings 1 of 2</div>
+        <div class="who" id="bName">You batting</div>
+        <div class="runs" id="sRuns">0/0</div>
+        <div class="line"><span>Overs</span><b id="sOvers">0.0</b></div>
+        <div class="line"><span>Balls left</span><b id="sLeft">12</b></div>
+        <div class="line"><span>Wickets</span><b id="sWk">3 left</b></div>
+        <div class="target">
+          <div class="small">TARGET</div>
+          <div class="tnum" id="sTarget">&mdash;</div>
+          <div class="need" id="sNeed">Set a target!</div>
+        </div>
+      </aside>
+
+      <div id="gridwrap">
+        <div id="gridlines"></div>
+        <div id="grid"></div>
+      </div>
+
+      <aside id="rightPanel" class="panel sketch">
+        <h3>LAST BALLS</h3>
+        <div id="hist"></div>
+        <h3>POWER-UPS</h3>
+        <div class="fx">
+          <span class="fxchip" id="fxFH">FREE HIT</span>
+          <span class="fxchip" id="fxDB">2X RUN</span>
+        </div>
+        <button class="btn small red" id="adFreeHit">Ad: Free Hit</button>
+        <div class="bottom-btns">
+          <button class="btn small" id="muteBtn">Sound: ON</button>
+          <button class="btn small" id="quitBtn">Quit</button>
+        </div>
+      </aside>
+
+      <div id="popup"></div>
+      <div id="toast"></div>
+    </section>
+
+    <!-- ============ RESULT ============ -->
+    <section id="result" class="screen">
+      <div id="resultBody"></div>
+    </section>
+
+    <!-- ============ MODAL ============ -->
+    <div id="overlay">
+      <div class="ovbox sketch">
+        <div id="ovText"></div>
+        <div id="ovBtns"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="rotate">Rotate your phone to landscape for the best view</div>
+
+<!-- CrazyGames SDK (the game still runs if this fails to load) -->
+<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
